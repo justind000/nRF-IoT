@@ -34,6 +34,8 @@ ADVANTAGES:
 
 -nodes can be eliminated in favor of an all relay network.
 
+-small, under 8k. Could get smaller with some tinkering (remove printf from RM24)
+
 DISADVANTAGES:
 
 -relay messages flood the network. The number of messages (should be) (number of relays)^2. So with a large number of relays, a huge amount of traffic is generated. 
