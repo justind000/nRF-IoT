@@ -5,6 +5,7 @@
 RF24 radio(9,10);
 
 #define RELAYBROADCAST(x) (0xAA00000000LL + x)
+#define NODEACK(x) (0xCC00000000LL + x)
 
 struct SENSOR{
   float temp;
@@ -24,6 +25,9 @@ struct HEADER{
 
   long cnt[10] = {};
   byte cntID = 0;
+  byte retries = 0;             //how many times have we tried to rx
+  const byte MAX_RETRIES = 5;  //how many times will we try?
+  
 
 void setup(void){
   Serial.begin(57600);
@@ -32,24 +36,50 @@ void setup(void){
   radio.enableDynamicPayloads();
   randomSeed(analogRead(0));
   Serial.println("node starting...");
-  radio.openReadingPipe(1 ,RELAYBROADCAST(2));
+  radio.openReadingPipe(1 ,NODEACK(1));
   radio.openWritingPipe(RELAYBROADCAST(2));
   radio.startListening();
  }
 
 void loop(void){
+  header.ID = random(1, 0xffff);    //this is above the label for testing
+  retry:
     radio.stopListening();
     header.type = 3;
     header.hops = 0;
-    header.src = 0xabcd;            //src is the only sort of addressing, it is unique to each node
-    header.ID = random(1, 0xffff);  //this identifies each message sent from another
-    header.sensor.temp = 78.8;      //some actual sensor data just hardcoded in for testing
+    header.src = 0xabcd;
+    
+    header.sensor.temp = 78.8;
     Serial.println(header.ID, HEX);
-  //send a broadcast to any relay that can hear
-  radio.openWritingPipe(RELAYBROADCAST(1));
-  bool ok = radio.write( &header, sizeof(header), true );
-  radio.startListening();
-  
+    //send a relay broadcast to any relay that can hear
+    radio.openWritingPipe(RELAYBROADCAST(1));
+    radio.write( &header, sizeof(header), true );
+    radio.startListening();
+    // Wait here until we get a response, or timeout (250ms)
+    unsigned long started_waiting_at = millis();
+    bool timeout = false;
+    while ( ! radio.available() && ! timeout )
+      if (millis() - started_waiting_at > 200 )
+        timeout = true;
+
+    // Describe the results
+    if ( timeout ){
+      Serial.println("NACK");
+      retries++;
+      if (retries < MAX_RETRIES)
+        goto retry;    //it didnt send and we still have some retries left
+      else
+        retries = 0;  //it didnt send and we have tried as many times as we are willing
+        goto done;    //reset counter and wait until next cycle to try another time
+    }
+    else{
+      long src;      //ack returns just the header.ID, so check what was returned with what was sent
+      radio.read( &src, radio.getDynamicPayloadSize() );
+      if (src == header.ID)
+        Serial.print("ACK: ");Serial.println(src, HEX);
+        retries = 0;
+    }
+  done:
   delay(3000);
 
   //testing
