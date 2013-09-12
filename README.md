@@ -4,8 +4,6 @@ nRF-IoT
 RF24 based sensor-mesh (flood, addressless) network
 
 
-RF24 based sensor-mesh (flood, addressless) network
-
 *****This uses the modified RF24 library available here https://github.com/gcopeland/RF24. You'll need to replace your RF24 library with this one to compile.
 
 It operates uses broadcasts and as such does not use or need any addresses. 
