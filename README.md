@@ -20,7 +20,7 @@ It is structured as follows:
 
 Nodes only talk to relays, relays talk amongst each other, and also the talk to the base. 
 
-The relays create a mesh network out of themselves. They broadcast every message they receive to every other relay. With this layout, only one relay has to be within range of the base, and each relay only needs to be within range of one other relay. The relays don't have addresses and broadcast blindly to each other. Logic is setup to prevent infinite rebroadcast loops between the relays. 
+The relays create a mesh network amongst themselves. They broadcast every message they receive to every other relay. With this layout, only one relay has to be within range of the base, and each relay only needs to be within range of one other relay. The relays don't have addresses and broadcast blindly to each other. Logic is setup to prevent infinite rebroadcast loops between the relays. 
 
 Nodes broadcast their messages to relays, but not to each other. If more than one relay can listen to a node, each relay will re-transmit that reading along to the base, creating a bit of redundancy. Nodes have delivery acknowledgment. 
 
