@@ -4,7 +4,7 @@ nRF-IoT
 RF24 based sensor-mesh (flood, addressless) network
 
 
-*****This uses the modified RF24 library available here https://github.com/gcopeland/RF24. You'll need to replace your RF24 library with this one to compile.
+*****This uses the modified RF24 library available here https://github.com/gcopeland/RF24. You'll need to replace your RF24 library with this one to compile (this fork adds broadcast capability, and also claims minor performance improvements, various bug fixes, not exactly drop-in compatible so be warned).
 
 Most of this was implemented using the original RF24 driver available here http://maniacbug.github.io/RF24/
 
