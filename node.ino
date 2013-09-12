@@ -41,11 +41,11 @@ void loop(void){
     radio.stopListening();
     header.type = 3;
     header.hops = 0;
-    header.src = 0xabcd;
-    header.ID = random(1, 0xffff);
-    header.sensor.temp = 78.8;
+    header.src = 0xabcd;            //src is the only sort of addressing, it is unique to each node
+    header.ID = random(1, 0xffff);  //this identifies each message sent from another
+    header.sensor.temp = 78.8;      //some actual sensor data just hardcoded in for testing
     Serial.println(header.ID, HEX);
-  //send a node broadcast to any relay that can hear
+  //send a broadcast to any relay that can hear
   radio.openWritingPipe(RELAYBROADCAST(1));
   bool ok = radio.write( &header, sizeof(header), true );
   radio.startListening();
