@@ -45,7 +45,7 @@ void loop(void){
     header.ID = random(1, 0xffff);
     header.sensor.temp = 78.8;
     Serial.println(header.ID, HEX);
-  //send a node broadcast to any node that can hear
+  //send a node broadcast to any relay that can hear
   radio.openWritingPipe(RELAYBROADCAST(1));
   bool ok = radio.write( &header, sizeof(header), true );
   radio.startListening();
