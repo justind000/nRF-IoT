@@ -6,7 +6,13 @@ RF24 based sensor-mesh (flood, addressless) network
 
 *****This uses the modified RF24 library available here https://github.com/gcopeland/RF24. You'll need to replace your RF24 library with this one to compile.
 
-It operates uses broadcasts and as such does not use or need any addresses. 
+Most of this was implemented using the original RF24 driver available here http://maniacbug.github.io/RF24/
+
+Some ideas and code were also taken from this project https://github.com/mic159/ArduinoMesh
+
+It operates using broadcasts and as such does not use or need any addresses. 
+
+To get this working, the most straight-forward setup is with three boards. Burn node, relay, and base to each and they should all start talking to each other. Other possible setups would be two or more relays, or relays and a base. There is some testing code in the relays to send out a broadcast (look at the bottom for Serial.read), negating the need for a node. 
 
 It is structured as follows:
 
@@ -21,12 +27,19 @@ Nodes broadcast their messages to relays, but not to each other. If more than on
 The base potentially receives multiple copies of the same node message and only accepts the first instance of it. 
 
 ADVANTAGES:
--simple to setup
--no addresses needed
--nodes can be eliminated in favor of an all relay network
+
+-simple to setup.
+
+-no addresses needed.
+
+-nodes can be eliminated in favor of an all relay network.
 
 DISADVANTAGES:
+
 -relay messages flood the network. The number of messages (should be) (number of relays)^2. So with a large number of relays, a huge amount of traffic is generated. 
+
 -The logic to stop infinite relay loops probably needs to be worked on more. It is very simple at this point and probably the most likely point of failure. 
+
 -At this time, no acknowledgement of [relay >-> base]messages.
+
 -At this time, one way communication only.
