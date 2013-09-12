@@ -6,6 +6,7 @@ RF24 radio(9,10);
 
 #define BASEBROADCAST(x) (0xBB00000000LL + x)
 #define RELAYBROADCAST(x) (0xAA00000000LL + x)
+#define NODEACK(x) (0xCC00000000LL + x)
 
 struct SENSOR{
   float temp;
@@ -62,14 +63,17 @@ void loop(void){
         //read whatever is available
         done = radio.read( &header, radio.getDynamicPayloadSize() );
         Serial.print( "Got message from 0x" ); Serial.print( header.src, HEX );Serial.print( " ID:" );Serial.print( header.ID, HEX ); Serial.print( " Hops: " );Serial.println(header.hops);
-        //delay a little bit
-        //delay( random( 1,21 ));
+        }
+        delay(20);    //wait a bit for node to switch to receiver
+        radio.stopListening();
+        radio.openWritingPipe( NODEACK(1) );
+        radio.write( &header.ID, sizeof(header.ID), true );    //send out ack with the id of our received message
         //this could be an original node broadcast or it could be another relay's tx.
         //they both get forwarded, DupID is used to stay out of an infinite loops of relays sending relays sending relays...
         //so far remembering the last ten has worked. this might not work on a larger scale. Needs more testing.
+        
         if (!DupID(header.ID)){
           radio.stopListening();
-          
           //send this on to the base
           radio.openWritingPipe( BASEBROADCAST(1) );
           bool ok = radio.write( &header, sizeof(header), true );
@@ -78,13 +82,8 @@ void loop(void){
           header.hops++;    //only count relay hops, not passing from relay to base
           radio.openWritingPipe( RELAYBROADCAST(2) );
           radio.write( &header, sizeof(header), true );
-          //if (ok)
-          //  Serial.println("...OK");
-          //  else
-          //  Serial.println("...Fail");
           radio.startListening();
         }
-      }
     }
 delay(100);
   //testing
