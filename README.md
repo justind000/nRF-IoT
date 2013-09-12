@@ -34,7 +34,7 @@ ADVANTAGES:
 
 -nodes can be eliminated in favor of an all relay network.
 
--small, under 8k. Could get smaller with some tinkering (remove printf from RM24)
+-small, under 8k. Could get smaller with some tinkering (remove printf from RF24)
 
 DISADVANTAGES:
 
