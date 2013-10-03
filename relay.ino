@@ -68,6 +68,7 @@ void loop(void){
         radio.stopListening();
         radio.openWritingPipe( NODEACK(1) );
         radio.write( &header.ID, sizeof(header.ID), true );    //send out ack with the id of our received message
+        radio.startListening();
         //this could be an original node broadcast or it could be another relay's tx.
         //they both get forwarded, DupID is used to stay out of an infinite loops of relays sending relays sending relays...
         //so far remembering the last ten has worked. this might not work on a larger scale. Needs more testing.
@@ -86,6 +87,7 @@ void loop(void){
         }
     }
 delay(100);
+
   //testing
 if ( Serial.available() )
   {
