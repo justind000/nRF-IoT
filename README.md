@@ -45,3 +45,5 @@ DISADVANTAGES:
 -At this time, no acknowledgement of [relay >-> base]messages.
 
 -At this time, one way communication only.
+
+I have included a python version of the base sketch. I run this as a daemon on a beaglebone black and it serves as my base. The python base also uploads the data to a self-hosted emoncms site. It makes some slight changes, namely dynamic payloads don't seem to work in this setup, and the address of the base is changed.
